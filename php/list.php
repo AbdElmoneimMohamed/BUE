@@ -1,37 +1,50 @@
 <?php
-$host = 'db';
-$dbn = 'php-app';
-$user = 'USER';
-$pass = 'PASS';
+require_once('Users.php');
 
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbn", $user, $pass);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$user = new Users();
 
-    $sql = "select * from users";
-    // Prepare statement
-    $stmt = $conn->prepare($sql);
+?>
 
-    $stmt->execute();
 
-    echo "<table style='border: solid 1px black;'>";
-    echo "<tr><th>Id</th><th>Name</th><th>Email</th><th>Action</th></tr>";
-
-    foreach($stmt->fetchAll() as $k=>$v) {
-        echo '<tr>';
-        echo '<td style="width:150px;border:1px solid black;">' . $v['id'] .'</td>';
-        echo '<td style="width:150px;border:1px solid black;">' . $v['name'] .'</td>';
-        echo '<td style="width:150px;border:1px solid black;">' . $v['email'] .'</td>';
-        echo '<td><form action="delete.php" method="post"> 
-                    <input type="hidden" name="id" value=" '. $v['id'].'">
-                    <input type="submit" class="btn btn-primary" name="delete" value="Delete">
-                    </form>
-            </td>';
-        echo '</tr>';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Record</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
+    <style type="text/css">
+        .wrapper {
+            width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<table style='border: solid 1px black;'>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+    <?php
+        foreach($user->listUser() as $user) {
+    ?>
+    <tr>
+        <td style="width:150px;border:1px solid black;"><?= $user['id'] ?></td>
+        <td style="width:150px;border:1px solid black;"><?= $user['name'] ?></td>
+        <td style="width:150px;border:1px solid black;"><?= $user['mobile'] ?>'</td>
+        <td><form action="delete.php" method="post">
+                <input type="hidden" name="id" value="<?= $user['id'] ?>">
+                <input type="submit" class="btn btn-primary" name="delete" value="Delete">
+            </form>
+        </td>
+        </tr>
+    <?php
     }
+    ?>
 
-} catch (PDOException $e) {
-    echo $e->getMessage();
-}
-$conn = null;
+</body>
+</html>
+
+
